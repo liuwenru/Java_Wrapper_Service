@@ -1,0 +1,332 @@
+#! /bin/sh
+#-----------------------------------------------------------------------------
+#--------------   TESTS - wrapper.ulimit.nofile.* properties   ---------------
+#-----------------------------------------------------------------------------
+
+. common/resourcelimit
+setup "n" "the number of file descriptors"
+
+#-----------------------------------------------------------------------------
+
+# Test 1-a
+NOFILE_SOFT=`expr $CURRENT_HARD - 1`
+EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 1-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 1-b
+EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 1-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 2-a
+NOFILE_SOFT=`expr $CURRENT_HARD + 1`
+EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 2-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 2-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 2-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 3-a
+NOFILE_HARD=`expr $CURRENT_HARD - 1`
+if [ $CURRENT_SOFT -gt $NOFILE_HARD ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+fi
+runUlimitTestFull "Test 3-a" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 3-b
+if [ $CURRENT_SOFT -gt $NOFILE_HARD ] ; then
+    EXPECTED_OUTPUT="The Wrapper will stop"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+fi
+runUlimitTestFull "Test 3-b" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 4-a
+NOFILE_HARD=`expr $CURRENT_HARD + 1`
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 4-a" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 4-b
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 4-b" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 5-a
+NOFILE_HARD=`expr $CURRENT_SOFT - 1`
+EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+runUlimitTestFull "Test 5-a" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 5-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 5-b" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 6-a
+NOFILE_HARD=`expr $CURRENT_HARD - 1`
+NOFILE_SOFT=`expr $CURRENT_HARD - 2`
+EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+runUlimitTestFull "Test 6-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 6-b
+EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+runUlimitTestFull "Test 6-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 7-a
+NOFILE_HARD=`expr $CURRENT_HARD + 1`
+NOFILE_SOFT=`expr $CURRENT_HARD - 2`
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 7-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 7-b
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 7-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 8-a
+NOFILE_HARD=`expr $CURRENT_HARD - 2`
+NOFILE_SOFT=`expr $CURRENT_HARD - 1`
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 8-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 8-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 8-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 9-a
+NOFILE_HARD=`expr $CURRENT_HARD + 1`
+NOFILE_SOFT=`expr $CURRENT_HARD + 2`
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 9-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 9-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 9-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 10-a
+NOFILE_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 10-a" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 10-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 10-b" "#wrapper.ulimit.nofile.soft=" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 11-a
+NOFILE_SOFT="unlimited"
+EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 11-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 11-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 11-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 12-a
+NOFILE_SOFT="unlimited"
+NOFILE_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 12-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 12-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 12-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 13-a
+NOFILE_SOFT=`expr $CURRENT_HARD - 1`
+NOFILE_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 13-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 13-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 13-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 14-a
+NOFILE_SOFT=`expr $CURRENT_HARD + 1`
+NOFILE_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 14-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 14-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 14-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 15-a
+NOFILE_SOFT="2147483646"
+NOFILE_HARD="2147483646"
+EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+if [ $IS_ROOT = TRUE ] ; then
+    # Some platforms will allow to raise the limits to such high values while other wont
+    EXPECTED_OUTPUT2="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+fi
+runUlimitTestFull "Test 15-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 15-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+if [ $IS_ROOT = TRUE ] ; then
+    # Some platforms will allow to raise the limits to such high values while other wont
+    EXPECTED_OUTPUT2="Number of open file descriptors limits: $NOFILE_SOFT (soft), $NOFILE_HARD (hard)"
+fi
+runUlimitTestFull "Test 15-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+# Clear EXPECTED_OUTPUT2
+EXPECTED_OUTPUT2=
+
+# Test 16-a
+NOFILE_SOFT="current"
+NOFILE_HARD=`expr $CURRENT_HARD - 1`
+if [ $CURRENT_SOFT -gt $NOFILE_HARD ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+fi
+runUlimitTestFull "Test 16-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 16-b
+if [ $CURRENT_SOFT -gt $NOFILE_HARD ] ; then
+    EXPECTED_OUTPUT="The Wrapper will stop"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $NOFILE_HARD (hard)"
+fi
+runUlimitTestFull "Test 16-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 17-a
+NOFILE_SOFT="foo"
+NOFILE_HARD="foo"
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 17-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 17-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 17-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 18-a
+NOFILE_SOFT="foo"
+NOFILE_HARD="foo"
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 18-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 18-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 18-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 19-a
+NOFILE_SOFT="-1"
+NOFILE_HARD="-1"
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 19-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 19-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 19-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 20-a
+NOFILE_SOFT="HARD"
+EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 20-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 20-b
+EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 20-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "#wrapper.ulimit.nofile.hard=" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 21-a
+NOFILE_SOFT="HARD"
+NOFILE_HARD=`expr $CURRENT_HARD - 1`
+EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+runUlimitTestFull "Test 21-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 21-b
+EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+runUlimitTestFull "Test 21-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 22-a
+NOFILE_SOFT="HARD"
+NOFILE_HARD=`expr $CURRENT_HARD + 1`
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 22-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 22-b
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 22-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 23-a
+NOFILE_SOFT="HARD"
+NOFILE_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 23-a" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 23-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Number of open file descriptors limits: $NOFILE_HARD (soft), $NOFILE_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 23-b" "wrapper.ulimit.nofile.soft=$NOFILE_SOFT" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+# Test 24-a
+NOFILE_HARD="HARD"
+EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 24-a" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=FALSE"
+
+# Test 24-b
+EXPECTED_OUTPUT="Number of open file descriptors limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 24-b" "wrapper.ulimit.nofile.hard=$NOFILE_HARD" "wrapper.ulimit.nofile.strict=TRUE"
+
+printReport
