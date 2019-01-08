@@ -7,9 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#undef org_tanukisoftware_wrapper_WrapperProcessInputStream_SKIP_BUFFER_SIZE
-#define org_tanukisoftware_wrapper_WrapperProcessInputStream_SKIP_BUFFER_SIZE 2048L
-/* Inaccessible static: skipBuffer */
+#undef org_tanukisoftware_wrapper_WrapperProcessInputStream_MAX_SKIP_BUFFER_SIZE
+#define org_tanukisoftware_wrapper_WrapperProcessInputStream_MAX_SKIP_BUFFER_SIZE 2048L
 /*
  * Class:     org_tanukisoftware_wrapper_WrapperProcessInputStream
  * Method:    nativeRead

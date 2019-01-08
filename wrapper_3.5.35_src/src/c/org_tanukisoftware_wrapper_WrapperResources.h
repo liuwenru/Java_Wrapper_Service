@@ -7,10 +7,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Inaccessible static: m_outError */
-/* Inaccessible static: m_validateResourceKeys */
-/* Inaccessible static: EMPTY_OBJECT_ARRAY */
-/* Inaccessible static: class_00024org_00024tanukisoftware_00024wrapper_00024WrapperResources */
 /*
  * Class:     org_tanukisoftware_wrapper_WrapperResources
  * Method:    nativeGetLocalizedString
