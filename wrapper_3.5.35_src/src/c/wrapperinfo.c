@@ -32,6 +32,6 @@ TCHAR *wrapperArch = TEXT("x86");
 TCHAR *wrapperOS = TEXT("linux");
 TCHAR *wrapperReleaseDate = TEXT("20180412");
 TCHAR *wrapperReleaseTime = TEXT("0000");
-TCHAR *wrapperBuildDate = TEXT("20190108");
-TCHAR *wrapperBuildTime = TEXT("2216");
+TCHAR *wrapperBuildDate = TEXT("20190109");
+TCHAR *wrapperBuildTime = TEXT("1547");
 

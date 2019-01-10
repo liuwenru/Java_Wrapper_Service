@@ -31,10 +31,11 @@
  * Author:
  *   Leif Mortenson <leif@tanukisoftware.com>
  *   Ryan Shaw
+ *   Wrapper Service 的main 函数位置
  */
 
 #ifndef WIN32
-
+// 使用预定义的宏来进行操作系统的定义，如下如果在Linux下编译就会自动包含<features.h> 头文件
 #ifdef LINUX
  #include <features.h>
 #endif
@@ -79,6 +80,7 @@
 pid_t getsid(pid_t pid);
 #endif
 
+// 定义获取最大小方法，使用宏去定义
 #define max(x,y) (((x) > (y)) ? (x) : (y))
 #define min(x,y) (((x) < (y)) ? (x) : (y))
 
@@ -95,6 +97,7 @@ int pipedes[2] = {-1, -1};
  */
 #define MAX_USER_NAME_LENGTH 32
 
+// TCHAR 其实就是char的别名
 TCHAR wrapperClasspathSeparator = TEXT(':');
 
 int javaIOThreadSet = FALSE;
@@ -109,6 +112,7 @@ int timerThreadStarted = FALSE;
 int stopTimerThread = FALSE;
 int timerThreadStopped = FALSE;
 
+// TICKS 其实就是long 别名
 TICKS timerTicks = WRAPPER_TICK_INITIAL;
 
 /******************************************************************************
@@ -117,6 +121,7 @@ TICKS timerTicks = WRAPPER_TICK_INITIAL;
 
 /**
  * exits the application after running shutdown code.
+ * 删除启动的时候的创建的pid等文件, _tunlink调用的就是系统调用unlink去完成删除
  */
 void appExit(int exitCode, int argc, TCHAR** argv) {
     int i;
@@ -199,6 +204,7 @@ int writePidFile(const TCHAR *filename, DWORD pid, int newUmask, int strict) {
 
 /**
  * Send a signal to the JVM process asking it to dump its JVM state.
+ * 向Java进程ID发送一个信号，请求一个dump文件，至于能不能dump出来全都是看JVM的心情
  */
 void wrapperRequestDumpJVMState() {
     log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS,
@@ -2059,7 +2065,7 @@ int main(int argc, char **argv) {
         log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT("  argv[%d]=%s"), i, argv[i]);
     }
 #endif
-    /* Parse the command and configuration file from the command line. */
+    /* Parse the command and configuration file from the command line. 解析从cmd启动wrapper二进制的命令参数 */
     if (!wrapperParseArguments(argc, argv)) {
         appExit(1, argc, argv);
         return 1; /* For compiler. */
