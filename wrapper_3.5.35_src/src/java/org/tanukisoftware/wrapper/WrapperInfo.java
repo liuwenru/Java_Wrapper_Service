@@ -56,8 +56,8 @@ final class WrapperInfo
         Calendar buildTime = Calendar.getInstance();
         try
         {
-            buildDate.setTime( new SimpleDateFormat( "yyyyMMdd" ).parse( "20190109" ) );
-            buildTime.setTime( new SimpleDateFormat( "HHmm" ).parse( "1547" ) );
+            buildDate.setTime( new SimpleDateFormat( "yyyyMMdd" ).parse( "20200531" ) );
+            buildTime.setTime( new SimpleDateFormat( "HHmm" ).parse( "1419" ) );
             
             m_build.set( buildDate.get( Calendar.YEAR ), 
                         buildDate.get( Calendar.MONTH ), 

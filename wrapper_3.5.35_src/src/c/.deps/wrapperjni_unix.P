@@ -2,16 +2,16 @@ wrapperjni_unix.o: wrapperjni_unix.c /usr/include/stdc-predef.h \
  /usr/include/stdio.h /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
  /usr/include/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-redhat-linux/6.4.1/include/stddef.h \
+ /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stddef.h \
  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/lib/gcc/x86_64-redhat-linux/6.4.1/include/stdarg.h \
+ /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stdarg.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
  /usr/include/stdlib.h /usr/include/bits/waitflags.h \
- /usr/include/bits/waitstatus.h /usr/include/xlocale.h \
- /usr/include/sys/types.h /usr/include/time.h /usr/include/endian.h \
+ /usr/include/bits/waitstatus.h /usr/include/endian.h \
  /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
- /usr/include/bits/byteswap-16.h /usr/include/sys/select.h \
+ /usr/include/bits/byteswap-16.h /usr/include/xlocale.h \
+ /usr/include/sys/types.h /usr/include/time.h /usr/include/sys/select.h \
  /usr/include/bits/select.h /usr/include/bits/sigset.h \
  /usr/include/bits/time.h /usr/include/sys/sysmacros.h \
  /usr/include/bits/pthreadtypes.h /usr/include/alloca.h \
@@ -27,15 +27,16 @@ wrapperjni_unix.o: wrapperjni_unix.c /usr/include/stdc-predef.h \
  /usr/include/sys/ucontext.h /usr/include/bits/sigthread.h \
  /usr/include/string.h /usr/include/sys/wait.h /usr/include/fcntl.h \
  /usr/include/bits/fcntl.h /usr/include/bits/fcntl-linux.h \
- /usr/include/bits/uio.h /usr/include/bits/stat.h /usr/include/unistd.h \
+ /usr/include/bits/uio.h /usr/include/linux/falloc.h \
+ /usr/include/bits/stat.h /usr/include/unistd.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/confname.h /usr/include/getopt.h loggerjni.h \
  logger_base.h wrapper_i18n.h /usr/include/bits/wchar.h \
  /usr/include/sys/stat.h /usr/include/locale.h /usr/include/bits/locale.h \
  /usr/include/syslog.h /usr/include/sys/syslog.h \
  /usr/include/bits/syslog-path.h /usr/include/wctype.h wrapperjni.h \
- org_tanukisoftware_wrapper_WrapperManager.h \
- /opt/jdk1.8.0_65/include/jni.h /opt/jdk1.8.0_65/include/linux/jni_md.h
+ org_tanukisoftware_wrapper_WrapperManager.h /usr/local/jdk/include/jni.h \
+ /usr/local/jdk/include/linux/jni_md.h
 wrapperjni_unix.c :
 /usr/include/stdc-predef.h :
 /usr/include/stdio.h :
@@ -44,25 +45,25 @@ wrapperjni_unix.c :
 /usr/include/bits/wordsize.h :
 /usr/include/gnu/stubs.h :
 /usr/include/gnu/stubs-64.h :
-/usr/lib/gcc/x86_64-redhat-linux/6.4.1/include/stddef.h :
+/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stddef.h :
 /usr/include/bits/types.h :
 /usr/include/bits/typesizes.h :
 /usr/include/libio.h :
 /usr/include/_G_config.h :
 /usr/include/wchar.h :
-/usr/lib/gcc/x86_64-redhat-linux/6.4.1/include/stdarg.h :
+/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stdarg.h :
 /usr/include/bits/stdio_lim.h :
 /usr/include/bits/sys_errlist.h :
 /usr/include/stdlib.h :
 /usr/include/bits/waitflags.h :
 /usr/include/bits/waitstatus.h :
-/usr/include/xlocale.h :
-/usr/include/sys/types.h :
-/usr/include/time.h :
 /usr/include/endian.h :
 /usr/include/bits/endian.h :
 /usr/include/bits/byteswap.h :
 /usr/include/bits/byteswap-16.h :
+/usr/include/xlocale.h :
+/usr/include/sys/types.h :
+/usr/include/time.h :
 /usr/include/sys/select.h :
 /usr/include/bits/select.h :
 /usr/include/bits/sigset.h :
@@ -98,6 +99,7 @@ wrapperjni_unix.c :
 /usr/include/bits/fcntl.h :
 /usr/include/bits/fcntl-linux.h :
 /usr/include/bits/uio.h :
+/usr/include/linux/falloc.h :
 /usr/include/bits/stat.h :
 /usr/include/unistd.h :
 /usr/include/bits/posix_opt.h :
@@ -117,5 +119,5 @@ wrapper_i18n.h :
 /usr/include/wctype.h :
 wrapperjni.h :
 org_tanukisoftware_wrapper_WrapperManager.h :
-/opt/jdk1.8.0_65/include/jni.h :
-/opt/jdk1.8.0_65/include/linux/jni_md.h :
+/usr/local/jdk/include/jni.h :
+/usr/local/jdk/include/linux/jni_md.h :
