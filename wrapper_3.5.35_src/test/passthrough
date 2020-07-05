@@ -1,6 +1,0 @@
-#! /bin/sh
-../bin/wrapper -c ../test/passthrough.conf wrapper.java.additional.1=-Dorg.tanukisoftware.wrapper.WrapperStartStopApp.passthroughMode=START -- "**** This line should only appear when the application STARTS" 
-../bin/wrapper -c ../test/passthrough.conf wrapper.java.additional.1=-Dorg.tanukisoftware.wrapper.WrapperStartStopApp.passthroughMode=STOP -- "**** This line should only appear when the application STOPS" 
-../bin/wrapper -c ../test/passthrough.conf wrapper.java.additional.1=-Dorg.tanukisoftware.wrapper.WrapperStartStopApp.passthroughMode=BOTH -- "**** This line should appear when the application STARTS and STOPS"
-../bin/wrapper -c ../test/passthrough.conf wrapper.java.additional.1=-Dorg.tanukisoftware.wrapper.WrapperStartStopApp.passthroughMode=IGNORE -- "**** This line should not appear at all."
-../bin/wrapper -c ../test/passthrough.conf -- "**** This line should not appear at all."
