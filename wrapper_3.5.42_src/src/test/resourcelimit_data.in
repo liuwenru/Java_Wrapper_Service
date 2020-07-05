@@ -1,0 +1,332 @@
+#! /bin/sh
+#-----------------------------------------------------------------------------
+#---------------   TESTS - wrapper.ulimit.data.* properties   ----------------
+#-----------------------------------------------------------------------------
+
+. common/resourcelimit
+setup "d" "the data segment size"
+
+#-----------------------------------------------------------------------------
+
+# Test 1-a
+DATA_SOFT=`expr $CURRENT_HARD - 1`
+EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 1-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 1-b
+EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 1-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 2-a
+DATA_SOFT=`expr $CURRENT_HARD + 1`
+EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 2-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 2-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 2-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 3-a
+DATA_HARD=`expr $CURRENT_HARD - 1`
+if [ $CURRENT_SOFT -gt $DATA_HARD ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+fi
+runUlimitTestFull "Test 3-a" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 3-b
+if [ $CURRENT_SOFT -gt $DATA_HARD ] ; then
+    EXPECTED_OUTPUT="The Wrapper will stop"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+fi
+runUlimitTestFull "Test 3-b" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 4-a
+DATA_HARD=`expr $CURRENT_HARD + 1`
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 4-a" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 4-b
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 4-b" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 5-a
+DATA_HARD=`expr $CURRENT_SOFT - 1`
+EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+runUlimitTestFull "Test 5-a" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 5-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 5-b" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 6-a
+DATA_HARD=`expr $CURRENT_HARD - 1`
+DATA_SOFT=`expr $CURRENT_HARD - 2`
+EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+runUlimitTestFull "Test 6-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 6-b
+EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+runUlimitTestFull "Test 6-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 7-a
+DATA_HARD=`expr $CURRENT_HARD + 1`
+DATA_SOFT=`expr $CURRENT_HARD - 2`
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 7-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 7-b
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 7-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 8-a
+DATA_HARD=`expr $CURRENT_HARD - 2`
+DATA_SOFT=`expr $CURRENT_HARD - 1`
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 8-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 8-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 8-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 9-a
+DATA_HARD=`expr $CURRENT_HARD + 1`
+DATA_SOFT=`expr $CURRENT_HARD + 2`
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 9-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 9-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 9-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 10-a
+DATA_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 10-a" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 10-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 10-b" "#wrapper.ulimit.data.soft=" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 11-a
+DATA_SOFT="unlimited"
+EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 11-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 11-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 11-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 12-a
+DATA_SOFT="unlimited"
+DATA_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 12-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 12-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 12-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 13-a
+DATA_SOFT=`expr $CURRENT_HARD - 1`
+DATA_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 13-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 13-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 13-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 14-a
+DATA_SOFT=`expr $CURRENT_HARD + 1`
+DATA_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 14-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 14-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 14-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 15-a
+DATA_SOFT="2147483646"
+DATA_HARD="2147483646"
+EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+if [ $IS_ROOT = TRUE ] ; then
+    # Some platforms will allow to raise the limits to such high values while other wont
+    EXPECTED_OUTPUT2="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+fi
+runUlimitTestFull "Test 15-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 15-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+if [ $IS_ROOT = TRUE ] ; then
+    # Some platforms will allow to raise the limits to such high values while other wont
+    EXPECTED_OUTPUT2="Data segment size limits: $DATA_SOFT (soft), $DATA_HARD (hard)"
+fi
+runUlimitTestFull "Test 15-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+# Clear EXPECTED_OUTPUT2
+EXPECTED_OUTPUT2=
+
+# Test 16-a
+DATA_SOFT="current"
+DATA_HARD=`expr $CURRENT_HARD - 1`
+if [ $CURRENT_SOFT -gt $DATA_HARD ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+fi
+runUlimitTestFull "Test 16-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 16-b
+if [ $CURRENT_SOFT -gt $DATA_HARD ] ; then
+    EXPECTED_OUTPUT="The Wrapper will stop"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $DATA_HARD (hard)"
+fi
+runUlimitTestFull "Test 16-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 17-a
+DATA_SOFT="foo"
+DATA_HARD="foo"
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 17-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 17-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 17-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 18-a
+DATA_SOFT="foo"
+DATA_HARD="foo"
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 18-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 18-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 18-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 19-a
+DATA_SOFT="-1"
+DATA_HARD="-1"
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 19-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 19-b
+EXPECTED_OUTPUT="The Wrapper will stop"
+runUlimitTestFull "Test 19-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 20-a
+DATA_SOFT="HARD"
+EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 20-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 20-b
+EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 20-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "#wrapper.ulimit.data.hard=" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 21-a
+DATA_SOFT="HARD"
+DATA_HARD=`expr $CURRENT_HARD - 1`
+EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+runUlimitTestFull "Test 21-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 21-b
+EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+runUlimitTestFull "Test 21-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 22-a
+DATA_SOFT="HARD"
+DATA_HARD=`expr $CURRENT_HARD + 1`
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 22-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 22-b
+if [ $IS_ROOT = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 22-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 23-a
+DATA_SOFT="HARD"
+DATA_HARD="unlimited"
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="Data segment size limits: $CURRENT_HARD (soft), $CURRENT_HARD (hard)"
+fi
+runUlimitTestFull "Test 23-a" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 23-b
+if [ $IS_ROOT = TRUE -a $UNLIMITED_ALLOWED = TRUE ] ; then
+    EXPECTED_OUTPUT="Data segment size limits: $DATA_HARD (soft), $DATA_HARD (hard)"
+else
+    EXPECTED_OUTPUT="The Wrapper will stop"
+fi
+runUlimitTestFull "Test 23-b" "wrapper.ulimit.data.soft=$DATA_SOFT" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+# Test 24-a
+DATA_HARD="HARD"
+EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 24-a" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=FALSE"
+
+# Test 24-b
+EXPECTED_OUTPUT="Data segment size limits: $CURRENT_SOFT (soft), $CURRENT_HARD (hard)"
+runUlimitTestFull "Test 24-b" "wrapper.ulimit.data.hard=$DATA_HARD" "wrapper.ulimit.data.strict=TRUE"
+
+printReport
