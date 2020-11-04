@@ -176,6 +176,8 @@ static time_t wrapperChildWorkLastDataTime = 0;
 static int wrapperChildWorkLastDataTimeMillis = 0;
 static int wrapperChildWorkIsNewLine = TRUE;
 
+//  Task ExecTime
+static TICKS LASTTASKEXECTicks=0;
 /**
  * Constructs a tm structure from a pair of Strings like "20091116" and "1514".
  *  The time returned will be in the local time zone.  This is not 100% accurate
@@ -4134,6 +4136,11 @@ void wrapperProcessActionList(int *actionList, const TCHAR *triggerMsg, int acti
         i = 0;
         while ((action = actionList[i]) != ACTION_LIST_END) {
                 switch(action) {
+                case ACTION_CUSTOMTASK:
+                    log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT("%s  Excute Custom Task Collect jstack jmp tcpdump etc.........."), triggerMsg);
+                    wrapperTaskProcess();
+                    break;
+
                 case ACTION_RESTART:
                     log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT("%s  %s"), triggerMsg, wrapperGetRestartProcessMessage());
                     wrapperRestartProcess();
@@ -6074,6 +6081,44 @@ const TCHAR *wrapperGetResumeProcessMessage() {
         return TEXT("Resume (Ignoring, already resuming)."); 
     } else {
         return TEXT("Resuming..."); 
+    }
+}
+
+
+/**
+ *     执行自定义的动作逻辑，调用一个bash脚本
+ * 
+ * 
+*/
+void wrapperTaskProcess(){
+    TICKS now=wrapperGetSystemTicks();
+    int afterTicks=wrapperGetTickAgeSeconds(LASTTASKEXECTicks,now);
+    log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT("afterTicks ...........%d.........javaPID.....%d"),afterTicks,wrapperData->javaPID);
+    if(afterTicks > 10){
+        pid_t pid;
+        pid=fork();
+        if (pid<0){
+            log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT(" Fork exec task.sh error exit..........."));
+        }else if (pid==0){
+            /* 子进程，线上调用脚本收集信息 */
+            TCHAR * shellcmd=TEXT("/task.sh");
+            TCHAR * cmd = (TCHAR *) malloc((_tcslen(wrapperData->confDir) + _tcslen(shellcmd)+1)*sizeof(TCHAR));
+            _tcscpy(cmd,wrapperData->confDir);
+            _tcscat(cmd,shellcmd);
+            log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT("Exec CMD.........%s"),cmd);
+            TCHAR javaid[50];
+            _sntprintf(javaid,40,TEXT("%d"),(int)wrapperData->javaPID);
+            TCHAR *newargv[] = { TEXT("task.sh"), javaid, TEXT("world"), NULL };
+            TCHAR *newenviron[] = { NULL };
+            _texecve(cmd, newargv, newenviron);
+        }
+        LASTTASKEXECTicks=wrapperGetSystemTicks();
+        //wait(0);
+        log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT("Execute Success.........."));
+        return;
+    }else {
+        /* code */
+        log_printf(WRAPPER_SOURCE_WRAPPER, LEVEL_STATUS, TEXT("last CustomTask is running...... "));
     }
 }
 
@@ -9129,8 +9174,10 @@ int getActionForName(TCHAR *actionName, const TCHAR *propertyName, int logErrors
     for (i = 0; i < len; i++) {
         actionName[i] = _totupper(actionName[i]);
     }
-
-    if (_tcscmp(actionName, TEXT("RESTART")) == 0) {
+    if (_tcscmp(actionName,TEXT("CUSTOMTASK")) == 0){
+        // 自定义逻辑
+        action = ACTION_CUSTOMTASK;
+    } else if (_tcscmp(actionName, TEXT("RESTART")) == 0) {
         action = ACTION_RESTART;
     } else if (_tcscmp(actionName, TEXT("SHUTDOWN")) == 0) {
         action = ACTION_SHUTDOWN;
@@ -9280,6 +9327,7 @@ int *wrapperGetActionListForNames(const TCHAR *actionNameList, const TCHAR *prop
  * @return Returns FALSE if successful, TRUE if there were any problems.
  */
 int loadConfigurationTriggers() {
+    LASTTASKEXECTicks=wrapperGetSystemTicks();
     const TCHAR *prop;
     TCHAR propName[256];
     int i;

@@ -172,6 +172,7 @@ extern char** environ;
 #define ACTION_RESUME            -7
 #define ACTION_SUCCESS           -8
 #define ACTION_GC                -9
+#define ACTION_CUSTOMTASK        -11
 #if defined(MACOSX)
 #define TRIGGER_ADVICE_NIL_SERVER TEXT("****** Returning nil _server **********")
 #define ACTION_ADVICE_NIL_SERVER -32
@@ -1105,6 +1106,10 @@ extern const TCHAR *wrapperGetResumeProcessMessage();
  */
 extern void wrapperRestartProcess();
 
+/**
+ * 根据日志中的提示自动执行的一个操作
+*/
+extern void wrapperTaskProcess();
 /**
  * Sends a command off to the JVM asking it to perform a garbage collection sweep.
  *
